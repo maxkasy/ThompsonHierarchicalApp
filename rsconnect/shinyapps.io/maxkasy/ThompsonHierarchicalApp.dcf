@@ -1,0 +1,13 @@
+name: ThompsonHierarchicalApp
+title: ThompsonHierarchicalApp
+username:
+account: maxkasy
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 621271
+bundleId: 1776492
+url: https://maxkasy.shinyapps.io/ThompsonHierarchicalApp/
+when: 1545345282.84335
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: priordata_test_nocovar.csv|priordata_test_v2.csv|priordata_test.csv
