@@ -13,7 +13,7 @@ ui <- fluidPage(
                               accept = c("text/csv",
                                          "text/comma-separated-values,text/plain",
                                          ".csv"))),
-             column(4,numericInput(inputId="RR", label="Replicate draws", value=5000, min=1)),
+             column(4,numericInput(inputId="RR", label="Replicate draws", value=10000, min=1)),
              column(4,numericInput(inputId="alpha", label="Share fully randomized", value=.2, min=0, max=1))
              ),
     fluidRow(column(4,actionButton(inputId = "calcbutton", label = "Calculate treatment assignment")),

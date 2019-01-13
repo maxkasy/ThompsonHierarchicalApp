@@ -5,9 +5,9 @@ account: maxkasy
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 621271
-bundleId: 1776492
+bundleId: 1811815
 url: https://maxkasy.shinyapps.io/ThompsonHierarchicalApp/
-when: 1545345282.84335
+when: 1547394603.07034
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: priordata_test_nocovar.csv|priordata_test_v2.csv|priordata_test.csv
