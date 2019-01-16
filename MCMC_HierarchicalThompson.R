@@ -1,6 +1,7 @@
 # Thompson without covariates
 DtchoiceThompson=function(Y,D, #outcomes and treatments thus far
                           k, #number of treatments
+                          C, #vector of treatment cost
                           Nt){ # number of observations for period t
   
   SS=tapply(Y,D,sum, default=0) #vector of successes
@@ -13,7 +14,7 @@ DtchoiceThompson=function(Y,D, #outcomes and treatments thus far
   
   for (i  in 1:Nt) {
     thetadraw=sapply(1:k, function(j) rbeta(1, A[j], B[j]))
-    Dt[i]=which.max(thetadraw)
+    Dt[i]=which.max(thetadraw-C)
     # if (Dt[i] == previousD) {
     #   thetadraw[previousD] = -Inf
     #   Dt[i]=which.max(thetadraw)
@@ -28,10 +29,11 @@ DtchoiceThompson=function(Y,D, #outcomes and treatments thus far
 
 DtchoiceThompsonProbabilities=function(Y,D, #outcomes and treatments thus far
                                        k, #number of treatments
-                                       RR=5000){ #number of replication draws
+                                       C=rep(0,k), #vector of treatment cost
+                                       RR=10000){ #number of replication draws
   
   # Repeat Thompson sampling RR times
-  DtRR=DtchoiceThompson(Y,D,k, RR)
+  DtRR=DtchoiceThompson(Y,D,k,C, RR)
   P_Dt=table(DtRR) / RR #average count for each treatment value and covariate value, replicated sample
   
   P_Dt=as.tibble(matrix(P_Dt, 1,k))
@@ -45,7 +47,7 @@ DtchoiceThompsonProbabilities=function(Y,D, #outcomes and treatments thus far
 
 # prior for hyperparameters governing distribution of theta across strata within each treatment arm 
 log.prior = function(alpha,beta) {
-  -2.5*log(alpha + beta)
+  -2.5*log(max(alpha + beta,0))
 }
 
 # sampling theta vector from posterior, given hyperparameters, for a given treatment arm
@@ -77,7 +79,7 @@ draw.beta = function(alpha,beta,theta,prop.sd,nx) {
 }
 
 sample.theta.d = function(NNd, SSd, nx, 
-                          RR=5000) { #sampling period
+                          RR=10000) { #sampling period
   B = 1000 #burn in period
   MM = B + RR
   # Metropolis tuning parameters
@@ -105,14 +107,15 @@ sample.theta.d = function(NNd, SSd, nx,
 
 DtchoiceMCMCProbabilities=function(Y,D,X, #outcomes, treatments, and covariates thus far
                                    k,nx, #number of treatments and number of strata
-                                   RR=5000){ #number of replication draws
+                                   C=rep(0,k), #vector of treatment cost
+                                   RR=10000){ #number of replication draws
   
   SS=tapply(Y,list(D,X),sum, default=0) #matrix of successes
   NN=tapply(Y,list(D,X),length, default=0) #matrix of trials
 
   P_Dt=matrix(0,nx,k)
   thetadraws=list()
-  
+
   for (d in 1:k) {
     thetadraws[[d]]=sample.theta.d(NN[d,], SS[d,], nx, RR)
   }
@@ -124,7 +127,7 @@ DtchoiceMCMCProbabilities=function(Y,D,X, #outcomes, treatments, and covariates 
   for (x in 1:nx) {
     for (r in 1:RR) {
       for (d in 1:k) thetaxdraw[d]=thetadraws[[d]][r,x]
-      Dt_x[r]=which.max(thetaxdraw)
+      Dt_x[r]=which.max(thetaxdraw-C)
     }
     P_Dt[x,]=table(Dt_x)/RR
   }
