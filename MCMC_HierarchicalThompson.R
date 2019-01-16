@@ -15,10 +15,6 @@ DtchoiceThompson=function(Y,D, #outcomes and treatments thus far
   for (i  in 1:Nt) {
     thetadraw=sapply(1:k, function(j) rbeta(1, A[j], B[j]))
     Dt[i]=which.max(thetadraw-C)
-    # if (Dt[i] == previousD) {
-    #   thetadraw[previousD] = -Inf
-    #   Dt[i]=which.max(thetadraw)
-    # }
     previousD = Dt[i]
   }
   
@@ -57,18 +53,18 @@ draw.thetas = function(alpha,beta, NNd, SSd, nx) {
 
 # sampling from posterior for hyperparameters, given theta vector, for a given treatment arm 
 draw.alpha = function(alpha,beta,theta,prop.sd,nx) {
-  alpha.star = rnorm(1,alpha,prop.sd)
+  alpha.star = max(rnorm(1,alpha,prop.sd),.5)
   num = nx*(lgamma(alpha.star+beta) - lgamma(alpha.star)) +
     alpha.star*sum(log(theta)) + log.prior(alpha.star,beta)
   den = nx*(lgamma(alpha+beta)      - lgamma(alpha)) +
     alpha     *sum(log(theta)) + log.prior(alpha,beta)
   acc = ifelse((log(runif(1))<=num - den)&&(alpha.star>0),1,0)
-  
+
   ifelse(acc,alpha.star,alpha)
 }
 
 draw.beta = function(alpha,beta,theta,prop.sd,nx) {
-  beta.star = rnorm(1,beta,prop.sd)
+  beta.star = max(rnorm(1,beta,prop.sd),.5)
   num = nx*(lgamma(alpha+beta.star) - lgamma(beta.star)) +
     beta.star*sum(log(1-theta)) + log.prior(alpha,beta.star)
   den = nx*(lgamma(alpha+beta)      - lgamma(beta)) +
@@ -83,16 +79,16 @@ sample.theta.d = function(NNd, SSd, nx,
   B = 1000 #burn in period
   MM = B + RR
   # Metropolis tuning parameters
-  alpha.prop.sd =  0.25
-  beta.prop.sd =   3
+  alpha.prop.sd =  1
+  beta.prop.sd =   1
   
   alpha = rep(0,MM)
   beta = alpha
   theta = matrix(0,MM,nx)
   
   # Initial values for the chain
-  alpha[1] = 1
-  beta[1] = 1
+  alpha[1] = 2
+  beta[1] = 2
   theta[1,] = draw.thetas(alpha[1],beta[1], NNd, SSd,nx)
  
   # MCMC simulation
