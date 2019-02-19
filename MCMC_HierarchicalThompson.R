@@ -53,7 +53,7 @@ draw.thetas = function(alpha,beta, NNd, SSd, nx) {
 
 # sampling from posterior for hyperparameters, given theta vector, for a given treatment arm 
 draw.alpha = function(alpha,beta,theta,prop.sd,nx) {
-  alpha.star = max(rnorm(1,alpha,prop.sd),.5)
+  alpha.star = truncnorm::rtruncnorm(1, a=.5, b=Inf, mean = alpha, sd = prop.sd)
   num = nx*(lgamma(alpha.star+beta) - lgamma(alpha.star)) +
     alpha.star*sum(log(theta)) + log.prior(alpha.star,beta)
   den = nx*(lgamma(alpha+beta)      - lgamma(alpha)) +
@@ -64,7 +64,7 @@ draw.alpha = function(alpha,beta,theta,prop.sd,nx) {
 }
 
 draw.beta = function(alpha,beta,theta,prop.sd,nx) {
-  beta.star = max(rnorm(1,beta,prop.sd),.5)
+  beta.star = truncnorm::rtruncnorm(1, a=.5, b=Inf, mean = beta, sd = prop.sd)
   num = nx*(lgamma(alpha+beta.star) - lgamma(beta.star)) +
     beta.star*sum(log(1-theta)) + log.prior(alpha,beta.star)
   den = nx*(lgamma(alpha+beta)      - lgamma(beta)) +
