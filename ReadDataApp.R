@@ -35,9 +35,9 @@ ReadDataApp=function(filepath,
   
   #create factor variable from treatment
   if (k>0) {
-    Data %<>% mutate(treatment=factor(as.matrix(Data[treatDummies])%*%(1:k)))
+    Data %<>% mutate(treatment=factor(as.matrix(Data[treatDummies])%*%(1:k), levels=1:k))
   } else if ("treatment" %in% varnames) { #if treatment is provided as categorical variable, rather than dummies
-    Data %<>% mutate(treatment=factor(treatment))
+    Data %<>% mutate(treatment=factor(treatment, levels=1:k))
   }    
 
   if ("outcome" %in% varnames) {
