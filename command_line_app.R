@@ -1,7 +1,7 @@
 source("ReadDataApp.R")
 source("MCMC_HierarchicalThompson.R")
 
-RR=10000
+RR=50000
 alpha=0.2
 
 datapath="priordata_test_missings.csv"
@@ -18,5 +18,5 @@ Pstar=DtchoiceMCMCProbabilities(priordata$Y,priordata$D,priordata$X, #outcomes, 
 
 Pactual=(1-alpha) * Pstar + alpha * (1/priordata$k)
 
-filename = paste(Sys.Date(), "treatmentprobabilities.csv", sep="")
+filename = paste(Sys.Date(), "_treatmentprobabilities.csv", sep="")
 write_csv(Pactual, path=filename)

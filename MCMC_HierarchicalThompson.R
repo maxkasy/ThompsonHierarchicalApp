@@ -53,9 +53,13 @@ draw.thetas = function(alpha,beta, NNd, SSd, nx) {
 
 # sampling from posterior for hyperparameters, given theta vector, for a given treatment arm 
 draw.alpha = function(alpha,beta,theta,prop.sd,nx) {
-  alpha.star = truncnorm::rtruncnorm(1, a=.5, b=Inf, mean = alpha, sd = prop.sd)
-  num = nx*(lgamma(alpha.star+beta) - lgamma(alpha.star)) +
-    alpha.star*sum(log(theta)) + log.prior(alpha.star,beta)
+  alpha.star = rnorm(1,alpha,prop.sd)
+  if (alpha.star > .5) { #restricting the support of hyperparameters
+    num = nx*(lgamma(alpha.star+beta) - lgamma(alpha.star)) +
+      alpha.star*sum(log(theta)) + log.prior(alpha.star,beta)
+  } else {
+    num=-Inf
+  }  
   den = nx*(lgamma(alpha+beta)      - lgamma(alpha)) +
     alpha     *sum(log(theta)) + log.prior(alpha,beta)
   acc = ifelse((log(runif(1))<=num - den)&&(alpha.star>0),1,0)
@@ -64,9 +68,13 @@ draw.alpha = function(alpha,beta,theta,prop.sd,nx) {
 }
 
 draw.beta = function(alpha,beta,theta,prop.sd,nx) {
-  beta.star = truncnorm::rtruncnorm(1, a=.5, b=Inf, mean = beta, sd = prop.sd)
-  num = nx*(lgamma(alpha+beta.star) - lgamma(beta.star)) +
-    beta.star*sum(log(1-theta)) + log.prior(alpha,beta.star)
+  beta.star = rnorm(1,beta,prop.sd)
+  if (beta.star > .5) { #restricting the support of hyperparameters
+    num = nx*(lgamma(alpha+beta.star) - lgamma(beta.star)) +
+      beta.star*sum(log(1-theta)) + log.prior(alpha,beta.star)
+  } else {
+    num=-Inf
+  }
   den = nx*(lgamma(alpha+beta)      - lgamma(beta)) +
     beta     *sum(log(1-theta)) + log.prior(alpha,beta)
   acc = ifelse((log(runif(1))<=num - den)&&(beta.star>0),1,0)
