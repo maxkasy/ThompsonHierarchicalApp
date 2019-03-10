@@ -6,8 +6,11 @@ alpha=0.2
 
 datapath="priordata_test_missings.csv"
   
-priordata=ReadDataApp(datapath)
-priordata$nx=16
+nx=16
+key=tibble(Strata=factor(1:nx),
+           strata=factor(1:nx))
+
+priordata=ReadDataApp(datapath,key)
 
 Pstar=DtchoiceMCMCProbabilities(priordata$Y,priordata$D,priordata$X, #outcomes, treatments, and covariates thus far
                                 priordata$k,priordata$nx, #number of treatments and number of strata
