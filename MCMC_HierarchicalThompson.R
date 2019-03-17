@@ -57,14 +57,10 @@ draw.alpha = function(alpha,beta,theta,prop.sd,nx) {
   if (alpha.star > .5) { #restricting the support of hyperparameters
     num = nx*(lgamma(alpha.star+beta) - lgamma(alpha.star)) +
       alpha.star*sum(log(theta)) + log.prior(alpha.star,beta)
-  } else {
-    num=-Inf
-  }  
+  } else num=-Inf
   den = nx*(lgamma(alpha+beta)      - lgamma(alpha)) +
     alpha     *sum(log(theta)) + log.prior(alpha,beta)
-  acc = ifelse((log(runif(1))<=num - den)&&(alpha.star>0),1,0)
-
-  ifelse(acc,alpha.star,alpha)
+  ifelse((log(runif(1))<=num - den),alpha.star,alpha)
 }
 
 draw.beta = function(alpha,beta,theta,prop.sd,nx) {
@@ -72,14 +68,10 @@ draw.beta = function(alpha,beta,theta,prop.sd,nx) {
   if (beta.star > .5) { #restricting the support of hyperparameters
     num = nx*(lgamma(alpha+beta.star) - lgamma(beta.star)) +
       beta.star*sum(log(1-theta)) + log.prior(alpha,beta.star)
-  } else {
-    num=-Inf
-  }
+  } else num=-Inf 
   den = nx*(lgamma(alpha+beta)      - lgamma(beta)) +
     beta     *sum(log(1-theta)) + log.prior(alpha,beta)
-  acc = ifelse((log(runif(1))<=num - den)&&(beta.star>0),1,0)
-  
-  ifelse(acc,beta.star,beta)
+  ifelse((log(runif(1))<=num - den),beta.star,beta)
 }
 
 sample.theta.d = function(NNd, SSd, nx, 
