@@ -104,8 +104,8 @@ sample.theta.d = function(NNd, SSd, nx,
 DtchoiceMCMCProbabilities=function(Y,D,X, #outcomes, treatments, and covariates thus far
                                    k,nx, #number of treatments and number of strata
                                    C=rep(0,k), #vector of treatment cost
-                                   RR=10000){ #number of replication draws
-  
+                                   RR=10000, #number of replication draws
+                                   return_sample=F){ #whether to return sample of thetas
   SS=tapply(Y,list(D,X),sum, default=0) #matrix of successes
   NN=tapply(Y,list(D,X),length, default=0) #matrix of trials
 
@@ -130,6 +130,10 @@ DtchoiceMCMCProbabilities=function(Y,D,X, #outcomes, treatments, and covariates 
   
   P_Dt=as_tibble(P_Dt)
   colnames(P_Dt)=paste(1:k)
-  P_Dt
+  
+  if (return_sample){
+      return(list(P_Dt=P_Dt, thetadraws=thetadraws))
+  } else
+      return(P_Dt)
 }
 
