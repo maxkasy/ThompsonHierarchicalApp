@@ -18,7 +18,7 @@ priordata=ReadDataApp(datapath,key)
 
 Pstar=DtchoiceMCMCProbabilities(priordata$Y,priordata$D,priordata$X, #outcomes, treatments, and covariates thus far
                                 priordata$k,priordata$nx, #number of treatments and number of strata
-                                RR)
+                                RR=RR)
 Pactual=(1-alpha) * Pstar + alpha * (1/priordata$k)
 
 filename = paste(Sys.Date(), "_treatmentprobabilities.csv", sep="")
